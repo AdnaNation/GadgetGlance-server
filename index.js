@@ -35,6 +35,8 @@ async function run() {
     app.get('/phones', async (req, res)=>{
       const search = req.query.search;
       const category = req.query.category;
+      const brand = req.query.brand;
+      const price = req.query.price;
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 10;
       const skip = page > 0 ? (page - 1) * limit : 0;
@@ -50,6 +52,30 @@ async function run() {
       }
       if(brand) {
         query.brand = brand;
+      }
+
+      if (price) {
+        if (price === "A") {
+          query.price = {
+            $gte: 0,
+            $lte: 100
+          };
+        } else if (price === "B") {
+          query.price = {
+            $gte: 101,
+            $lte: 500
+          };
+        } else if (price === "C") {
+          query.price = {
+            $gte: 501,
+            $lte: 1000
+          };
+        } else if (price === "D") {
+          query.price = {
+            $gte: 1001,
+            $lte: 2000
+          };
+        }
       }
 
         // const phones = await phonesCollection.find({}, { projection: { description: 0 } }).toArray();
