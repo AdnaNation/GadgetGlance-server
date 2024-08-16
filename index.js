@@ -48,6 +48,9 @@ async function run() {
       if(category) {
         query.category = category;
       }
+      if(brand) {
+        query.brand = brand;
+      }
 
         // const phones = await phonesCollection.find({}, { projection: { description: 0 } }).toArray();
         const phones = await phonesCollection
