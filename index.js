@@ -37,6 +37,20 @@ async function run() {
         res.send(phones)
       })
 
+      // pagination
+      app.get("/api/phones", async (req, res) => {
+        const { page = 1, limit = 10 } = req.query;
+        const phones = await phonesCollection
+          .find()
+          .skip((page - 1) * limit)
+          .limit(parseInt(limit))
+          .toArray();
+  
+        const total = await phonesCollection.countDocuments();
+  
+        res.json({ phones, totalPages: Math.ceil(total / limit) });
+      });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
