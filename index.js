@@ -37,6 +37,7 @@ async function run() {
       const category = req.query.category;
       const brand = req.query.brand;
       const price = req.query.price;
+      const sort = req.query.sort;
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 10;
       const skip = page > 0 ? (page - 1) * limit : 0;
@@ -78,9 +79,25 @@ async function run() {
         }
       }
 
+      let sortQuery = {}
+
+      if (sort) {
+        switch (sort) {
+          case "price-low-high":
+            sortQuery.price = 1; 
+            break;
+          case "price-high-low":
+            sortQuery.price = -1; 
+            break;
+          default:
+            break;
+        }
+      }
+
         // const phones = await phonesCollection.find({}, { projection: { description: 0 } }).toArray();
         const phones = await phonesCollection
         .find(query, { projection: { description: 0 } })
+        .sort(sortQuery)
         .skip(skip)
         .limit(limit)
         .toArray();
