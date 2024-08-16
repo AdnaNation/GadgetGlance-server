@@ -33,23 +33,69 @@ async function run() {
     const phonesCollection = client.db("PhonesDB").collection("phones");
 
     app.get('/phones', async (req, res)=>{
-        const phones = await phonesCollection.find({}, { projection: { description: 0 } }).toArray();
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = page > 0 ? (page - 1) * limit : 0;
+
+        // const phones = await phonesCollection.find({}, { projection: { description: 0 } }).toArray();
+        const phones = await phonesCollection
+        .find()
+        .skip(skip)
+        .limit(limit)
+        .toArray();
         res.send(phones)
       })
 
       // pagination
-      app.get("/api/phones", async (req, res) => {
-        const { page = 1, limit = 10 } = req.query;
-        const phones = await phonesCollection
-          .find()
-          .skip((page - 1) * limit)
-          .limit(parseInt(limit))
-          .toArray();
+      // app.get("/api/phones", async (req, res) => {
+      //   const { page = 1, limit = 10 } = req.query;
+      //   const phones = await phonesCollection
+      //     .find()
+      //     .skip((page - 1) * limit)
+      //     .limit(parseInt(limit))
+      //     .toArray();
   
-        const total = await phonesCollection.countDocuments();
+      //   const total = await phonesCollection.countDocuments();
+      //   console.log(phones);
   
-        res.json({ phones, totalPages: Math.ceil(total / limit) });
-      });
+      //   res.json({ phones, totalPages: Math.ceil(total / limit) });
+      // });
+
+      // app.get("/api/phones", async (req, res) => {
+      //   try {
+      //     // Ensure page and limit are integers
+      //     const page = parseInt(req.query.page) || 1;
+      //     const limit = parseInt(req.query.limit) || 10;
+      
+      //     // Calculate the skip value
+      //     const skip = (page - 1) * limit;
+      
+      //     // Fetch the phones data with pagination
+      //     const phones = await phonesCollection
+      //       .find()
+      //       .skip(skip)
+      //       .limit(limit)
+      //       .toArray();
+      
+      //     // Get the total number of documents
+      //     const total = await phonesCollection.countDocuments();
+      
+      //     // Respond with the data and pagination info
+      //     res.json({
+      //       phones,
+      //       currentPage: page,
+      //       totalPages: Math.ceil(total / limit),
+      //       totalItems: total
+      //     });
+      //   } catch (error) {
+      //     console.error('Error fetching phones:', error);
+      //     res.status(500).send({ error: 'An error occurred while fetching phones data.' });
+      //   }
+      // });
+      app.get("/totalPhones", async (req, res) => {
+        const totalPhonesCount = await phonesCollection.countDocuments();
+        res.send({totalPhonesCount});
+      })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
