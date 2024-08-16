@@ -33,13 +33,21 @@ async function run() {
     const phonesCollection = client.db("PhonesDB").collection("phones");
 
     app.get('/phones', async (req, res)=>{
+      const search = req.query.search;
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 10;
       const skip = page > 0 ? (page - 1) * limit : 0;
 
+      let query = {};
+      if(search){
+        query.$or = [
+          {phone_name: {$regex: search, $options: "i"}}
+        ]
+      }
+
         // const phones = await phonesCollection.find({}, { projection: { description: 0 } }).toArray();
         const phones = await phonesCollection
-        .find({}, { projection: { description: 0 } })
+        .find(query, { projection: { description: 0 } })
         .skip(skip)
         .limit(limit)
         .toArray();
