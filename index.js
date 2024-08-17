@@ -95,20 +95,15 @@ async function run() {
       }
 
         // const phones = await phonesCollection.find({}, { projection: { description: 0 } }).toArray();
+        const totalPhonesCount = await phonesCollection.countDocuments(query);
+        console.log(totalPhonesCount);
         const phones = await phonesCollection
         .find(query)
         .sort(sortQuery)
         .skip(skip)
         .limit(limit)
         .toArray();
-        res.send(phones)
-      })
-
-     
-      app.get("/totalPhones", async (req, res) => {
-        const totalPhonesCount = await phonesCollection.countDocuments();
-        console.log(totalPhonesCount);
-        res.send({totalPhonesCount});
+        res.send({phones, totalPhonesCount})
       })
 
     // Send a ping to confirm a successful connection
