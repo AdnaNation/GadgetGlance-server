@@ -7,7 +7,7 @@ const port = process.env.PORT || 5000;
 
 // middleware
 const corsOptions = {
-    origin: ['http://localhost:5173'],
+    origin: ['http://localhost:5173', 'https://gadgetglance-e9980.web.app'],
     credentials: true,
     optionSuccessStatus: 200,
   }
@@ -96,7 +96,7 @@ async function run() {
 
         // const phones = await phonesCollection.find({}, { projection: { description: 0 } }).toArray();
         const phones = await phonesCollection
-        .find(query, { projection: { description: 0 } })
+        .find(query)
         .sort(sortQuery)
         .skip(skip)
         .limit(limit)
